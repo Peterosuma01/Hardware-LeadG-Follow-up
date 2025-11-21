@@ -3,114 +3,321 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Steelwool Africa LTD - Lead Generation Follow-up System">
   <meta name="theme-color" content="#667eea">
-  <meta name="description" content="Steelwool Africa LTD - Lead Generation Follow-up">
-  <title>Steelwool Africa LTD</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Steelwool CRM">
+  
+  <title>Steelwool Africa LTD - Lead Generation</title>
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   
-  <!-- iOS Support -->
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Steelwool Africa">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
   
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body, html {
-      height: 100vh;
-      width: 100vw;
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { 
+      height: 100%;
       overflow: hidden;
-      position: fixed;
+    }
+    body { 
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
+      min-height:100vh; 
+      padding:10px; 
+      display:flex; 
+      flex-direction: column;
+      justify-content:center; 
+      align-items:center; 
+    }
+    .container { 
+      background:white; 
+      border-radius:12px; 
+      box-shadow:0 20px 60px rgba(0,0,0,0.3); 
+      max-width:900px; 
+      width:100%; 
+      height: calc(100vh - 20px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .header { 
+      text-align:center; 
+      padding: 12px 20px;
+      border-bottom:3px solid #667eea; 
+      flex-shrink: 0;
+    }
+    .logo { 
+      width:50px; 
+      height:50px; 
+      margin:0 auto 8px; 
+      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:22px;
+      font-weight:bold;
+    }
+    h1 { color:#333; font-size:18px; margin-bottom:2px; }
+    .subtitle { color:#666; font-size:12px; }
+    
+    .iframe-container {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
     }
     
-    #app-frame {
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .loading-overlay {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
-      border: none;
-      display: block;
+      right: 0;
+      bottom: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      transition: opacity 0.3s ease;
     }
     
-    .loader {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
     
     .spinner {
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid #ffffff;
-      border-radius: 50%;
       width: 50px;
       height: 50px;
+      border: 4px solid #e1e8ed;
+      border-top-color: #667eea;
+      border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
-    }
-    
-    .loader p {
-      color: white;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    
-    .loader .subtitle {
-      color: rgba(255,255,255,0.8);
-      font-size: 13px;
-      margin-top: 5px;
-      font-weight: 400;
     }
     
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      margin-top: 16px;
+      color: #667eea;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .offline-indicator {
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      background:#ef4444;
+      color:white;
+      padding:8px;
+      text-align:center;
+      font-size:13px;
+      display:none;
+      z-index:1001;
+    }
+    .offline-indicator.show { display:block; }
+    
+    .install-prompt {
+      position:fixed;
+      bottom:20px;
+      left:50%;
+      transform:translateX(-50%);
+      background:white;
+      padding:16px 24px;
+      border-radius:12px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.2);
+      display:none;
+      align-items:center;
+      gap:12px;
+      z-index:1000;
+      max-width:90%;
+    }
+    .install-prompt.show { display:flex; animation: slideUp 0.3s ease; }
+    @keyframes slideUp {
+      from { opacity:0; transform:translate(-50%, 20px); }
+      to { opacity:1; transform:translate(-50%, 0); }
+    }
+    .install-prompt button {
+      padding:8px 16px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+    }
+    .install-prompt .install-btn {
+      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color:white;
+    }
+    .install-prompt .dismiss-btn {
+      background:#e5e7eb;
+      color:#374151;
+    }
+    
+    .refresh-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+    .refresh-btn:hover {
+      transform: scale(1.1);
+    }
+    .refresh-btn:active {
+      transform: scale(0.95);
+    }
+    
+    @media (max-width:640px) {
+      body { padding:0; }
+      .container { 
+        border-radius: 0;
+        height: 100vh;
+      }
+      .header {
+        padding: 10px 15px;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      h1 { font-size: 16px; }
+      .subtitle { font-size: 11px; }
     }
   </style>
 </head>
 <body>
-  <div class="loader" id="loader">
-    <div class="spinner"></div>
-    <p>Steelwool Africa LTD</p>
-    <p class="subtitle">Loading Lead Generation Follow-up...</p>
+  <div class="offline-indicator" id="offlineIndicator">
+    ⚠️ You are currently offline. Some features may not be available.
   </div>
-  
-  <iframe 
-    id="app-frame"
-    src="https://script.google.com/macros/s/AKfycbz7tAE4SH0OVajA2acskG1o8EkDwGdOSw7kLDB46YMw4XYeOnTshRTGg25Bx6HIbhqDcg/exec"
-    onload="document.getElementById('loader').style.display='none'">
-  </iframe>
+
+  <div class="install-prompt" id="installPrompt">
+    <span>📱 Install Steelwool CRM for quick access</span>
+    <button class="install-btn" id="installBtn">Install</button>
+    <button class="dismiss-btn" id="dismissBtn">Later</button>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo">SW</div>
+      <h1>Steelwool Africa LTD</h1>
+      <p class="subtitle">Lead Generation Follow-up</p>
+    </div>
+
+    <div class="iframe-container">
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading application...</p>
+      </div>
+      <iframe 
+        id="appFrame"
+        src="https://script.google.com/macros/s/AKfycbz7tAE4SH0OVajA2acskG1o8EkDwGdOSw7kLDB46YMw4XYeOnTshRTGg25Bx6HIbhqDcg/exec"
+        allow="geolocation"
+        sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      ></iframe>
+    </div>
+  </div>
+
+  <button class="refresh-btn" id="refreshBtn" title="Refresh">
+    ↻
+  </button>
 
   <script>
-    // Register Service Worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-          .then(reg => console.log('Service Worker registered'))
-          .catch(err => console.log('Service Worker registration failed:', err));
-      });
+    // Hide loading overlay when iframe loads
+    const iframe = document.getElementById('appFrame');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    iframe.addEventListener('load', function() {
+      loadingOverlay.classList.add('hidden');
+    });
+    
+    // Refresh button functionality
+    document.getElementById('refreshBtn').addEventListener('click', function() {
+      loadingOverlay.classList.remove('hidden');
+      iframe.src = iframe.src;
+    });
+    
+    // Offline detection
+    const offlineIndicator = document.getElementById('offlineIndicator');
+    
+    function updateOnlineStatus() {
+      if (!navigator.onLine) {
+        offlineIndicator.classList.add('show');
+      } else {
+        offlineIndicator.classList.remove('show');
+      }
     }
-
-    // Prompt for installation
+    
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+    
+    // PWA Install Prompt
     let deferredPrompt;
+    const installPrompt = document.getElementById('installPrompt');
+    const installBtn = document.getElementById('installBtn');
+    const dismissBtn = document.getElementById('dismissBtn');
+    
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
+      installPrompt.classList.add('show');
     });
+    
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User ${outcome} the install prompt`);
+        deferredPrompt = null;
+        installPrompt.classList.remove('show');
+      }
+    });
+    
+    dismissBtn.addEventListener('click', () => {
+      installPrompt.classList.remove('show');
+    });
+    
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker registered:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
   </script>
 </body>
 </html>
