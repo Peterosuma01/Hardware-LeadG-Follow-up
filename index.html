@@ -3,488 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Steelwool Africa LTD - Lead Generation Follow-up System">
   <meta name="theme-color" content="#667eea">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Steelwool CRM">
-  
-  <title>Steelwool Africa LTD - Lead Generation</title>
+  <meta name="description" content="Steelwool Africa LTD - Lead Generation Follow-up">
+  <title>Steelwool Africa LTD</title>
   
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
-  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <!-- iOS Support -->
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Steelwool Africa">
   
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { 
-      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
-      min-height:100vh; 
-      padding:20px; 
-      display:flex; 
-      justify-content:center; 
-      align-items:center; 
-    }
-    .container { 
-      background:white; 
-      border-radius:12px; 
-      box-shadow:0 20px 60px rgba(0,0,0,0.3); 
-      max-width:760px; 
-      width:100%; 
-      padding:28px; 
-      max-height:95vh;
-      overflow-y:auto;
-    }
-    .header { 
-      text-align:center; 
-      margin-bottom:18px; 
-      padding-bottom:12px; 
-      border-bottom:3px solid #667eea; 
-    }
-    .logo { 
-      width:80px; 
-      height:80px; 
-      margin:0 auto 12px; 
-      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:white;
-      font-size:36px;
-      font-weight:bold;
-    }
-    h1 { color:#333; font-size:22px; margin-bottom:4px; }
-    .subtitle { color:#666; font-size:14px; }
-    .form-group { margin-bottom:14px; }
-    label { display:block; margin-bottom:8px; color:#333; font-weight:600; font-size:13px; }
-    input[type="text"], input[type="password"], input[type="email"], input[type="number"], select { 
-      width:100%; 
-      padding:10px 12px; 
-      border:2px solid #e1e8ed; 
-      border-radius:8px; 
-      font-size:13px; 
-      transition:all 0.3s ease; 
-      background:white; 
-    }
-    input:focus, select:focus {
-      outline:none;
-      border-color:#667eea;
-    }
-    select { cursor:pointer; appearance:none; padding-right:40px; }
-    select option:disabled { color:#999; background:#f5f5f5; }
-    .section-title { 
-      color:#667eea; 
-      font-size:16px; 
-      font-weight:700; 
-      margin-top:18px; 
-      margin-bottom:10px; 
-      padding-bottom:6px; 
-      border-bottom:2px solid #f0f0f0; 
-    }
-    .btn { 
-      width:100%; 
-      padding:12px; 
-      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); 
-      color:white; 
-      border:none; 
-      border-radius:8px; 
-      font-size:15px; 
-      font-weight:600; 
-      cursor:pointer; 
-      transition:all 0.3s ease; 
-      margin-top:8px; 
-    }
-    .btn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(102,126,234,0.4); }
-    .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-    .btn.small { width:48%; padding:10px; font-size:13px; }
-    .btn-row { display:flex; gap:8px; }
-    .message { 
-      padding:12px; 
-      border-radius:8px; 
-      margin-top:14px; 
-      display:none; 
-      font-size:13px; 
-    }
-    .message.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-    .message.error { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
-    .message.info { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
-    .message.show { display:block; animation: slideIn 0.3s ease; }
-    .loading { 
-      display:none; 
-      text-align:center; 
-      color:#667eea; 
-      font-size:13px; 
-      margin-top:8px; 
-    }
-    .loading.show { display:block; }
-    .loading::after {
-      content: '...';
-      animation: dots 1.5s steps(4, end) infinite;
-    }
-    @keyframes dots {
-      0%, 20% { content: '.'; }
-      40% { content: '..'; }
-      60% { content: '...'; }
-      80%, 100% { content: ''; }
-    }
-    @keyframes slideIn { 
-      from { opacity:0; transform:translateY(-10px);} 
-      to { opacity:1; transform:translateY(0);} 
-    }
-    .meta { font-size:12px; color:#666; margin-top:6px; }
-    .details-table { 
-      width:100%; 
-      border-collapse:collapse; 
-      margin-top:12px; 
-      border-radius:8px; 
-      overflow:hidden; 
-      box-shadow:0 6px 20px rgba(0,0,0,0.06); 
-    }
-    .details-table th, .details-table td { 
-      padding:10px 12px; 
-      border-bottom:1px solid #f0f0f0; 
-      text-align:left; 
-      font-size:13px; 
-    }
-    .details-table th { 
-      background:#fafafa; 
-      font-weight:700; 
-      color:#333; 
-    }
-    .small-muted { font-size:12px; color:#666; margin-top:6px; }
-    .hidden { display:none; }
-    .field-inline { display:flex; gap:8px; align-items:center; }
-    .field-inline > * { flex:1; }
-    .leads-list-section { margin-top:20px; }
-    .leads-table { 
-      width:100%; 
-      border-collapse:collapse; 
-      margin-top:12px; 
-      font-size:12px; 
-      max-height:400px; 
-      overflow-y:auto; 
-      display:block; 
-    }
-    .leads-table thead { 
-      position:sticky; 
-      top:0; 
-      background:#fafafa; 
-      z-index:1; 
-    }
-    .leads-table th, .leads-table td { 
-      padding:8px; 
-      border:1px solid #e1e8ed; 
-      text-align:left; 
-    }
-    .leads-table th { font-weight:700; color:#333; }
-    .leads-table tbody { 
-      display:block; 
-      max-height:300px; 
-      overflow-y:auto; 
-    }
-    .leads-table thead, .leads-table tbody tr { 
-      display:table; 
-      width:100%; 
-      table-layout:fixed; 
-    }
-    .btn-list { 
-      background: linear-gradient(135deg,#3b82f6 0%,#2563eb 100%); 
-      margin-top:12px; 
-    }
-    .btn-orders { 
-      background: linear-gradient(135deg,#10b981 0%,#059669 100%); 
-      margin-top:12px; 
-    }
-    .order-status { 
-      font-size:12px; 
-      color:#666; 
-      margin-top:8px; 
-      padding:8px; 
-      background:#f9fafb; 
-      border-radius:6px; 
-    }
-    .order-status strong { color:#333; }
-    
-    .install-prompt {
-      position:fixed;
-      bottom:20px;
-      left:50%;
-      transform:translateX(-50%);
-      background:white;
-      padding:16px 24px;
-      border-radius:12px;
-      box-shadow:0 8px 32px rgba(0,0,0,0.2);
-      display:none;
-      align-items:center;
-      gap:12px;
-      z-index:1000;
-      max-width:90%;
-    }
-    .install-prompt.show { display:flex; animation: slideUp 0.3s ease; }
-    @keyframes slideUp {
-      from { opacity:0; transform:translate(-50%, 20px); }
-      to { opacity:1; transform:translate(-50%, 0); }
-    }
-    .install-prompt button {
-      padding:8px 16px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:600;
-      font-size:14px;
-    }
-    .install-prompt .install-btn {
-      background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-      color:white;
-    }
-    .install-prompt .dismiss-btn {
-      background:#e5e7eb;
-      color:#374151;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
     
-    .offline-indicator {
-      position:fixed;
-      top:0;
-      left:0;
-      right:0;
-      background:#ef4444;
-      color:white;
-      padding:8px;
-      text-align:center;
-      font-size:13px;
-      display:none;
-      z-index:1001;
+    body, html {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: fixed;
     }
-    .offline-indicator.show { display:block; }
     
-    @media (max-width:640px) {
-      .btn-row { flex-direction:column; }
-      .btn.small { width:100%; }
-      .container { padding:16px; }
-      body { padding:10px; }
+    #app-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      border: none;
+      display: block;
+    }
+    
+    .loader {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.3);
+      border-top: 4px solid #ffffff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    .loader p {
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    
+    .loader .subtitle {
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      margin-top: 5px;
+      font-weight: 400;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="offline-indicator" id="offlineIndicator">
-    ⚠️ You are currently offline. Some features may not be available.
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>Steelwool Africa LTD</p>
+    <p class="subtitle">Loading Lead Generation Follow-up...</p>
   </div>
+  
+  <iframe 
+    id="app-frame"
+    src="https://script.google.com/macros/s/AKfycbz7tAE4SH0OVajA2acskG1o8EkDwGdOSw7kLDB46YMw4XYeOnTshRTGg25Bx6HIbhqDcg/exec"
+    onload="document.getElementById('loader').style.display='none'">
+  </iframe>
 
-  <div class="install-prompt" id="installPrompt">
-    <span>📱 Install Steelwool CRM for quick access</span>
-    <button class="install-btn" id="installBtn">Install</button>
-    <button class="dismiss-btn" id="dismissBtn">Later</button>
-  </div>
+  <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service Worker registered'))
+          .catch(err => console.log('Service Worker registration failed:', err));
+      });
+    }
 
-  <div class="container">
-    <div class="header">
-      <div class="logo">SW</div>
-      <h1>Steelwool Africa LTD</h1>
-      <p class="subtitle">Lead Generation Follow-up</p>
-      <p id="loggedInAs" class="meta"></p>
-    </div>
-
-    <div id="configSection">
-      <div class="form-group">
-        <label for="apiEndpoint">API Endpoint Configuration</label>
-        <input type="text" id="apiEndpoint" placeholder="Enter your Google Apps Script Web App URL">
-        <div class="small-muted">Enter the deployment URL from your Google Apps Script (ends with /exec)</div>
-        <button type="button" id="saveEndpointBtn" class="btn" style="margin-top:8px;">Save & Connect</button>
-      </div>
-      <div class="message" id="configMessage"></div>
-    </div>
-
-    <form id="leadForm" class="hidden">
-      <div class="form-group">
-        <label for="roleSelect">Select Role *</label>
-        <select id="roleSelect" required>
-          <option value="">-- Select Role --</option>
-          <option value="Supervisor">Supervisor</option>
-          <option value="SalesRep">Sales Representative</option>
-        </select>
-        <div class="meta">Choose <strong>Supervisor</strong> to edit Qualification and Approve/Decline (password required). Choose <strong>Sales Representative</strong> to edit Presentation (email, password, and approval required).</div>
-      </div>
-
-      <!-- Sales Rep Authentication -->
-      <div id="salesRepAuthSection" class="hidden">
-        <div class="form-group">
-          <label for="salesRepEmailAuth">Sales Rep Email *</label>
-          <input type="email" id="salesRepEmailAuth" placeholder="salesrep@example.com" required>
-          <div class="small-muted">Enter your email address as stored in the sheet (Column B).</div>
-        </div>
-        <div class="form-group">
-          <label for="salesRepPasswordAuth">Sales Rep Password *</label>
-          <input type="password" id="salesRepPasswordAuth" placeholder="Enter your password" required>
-        </div>
-      </div>
-
-      <!-- View Buttons -->
-      <div id="viewLeadsButtons" class="hidden">
-        <button type="button" id="viewGeneratedLeadsBtn" class="btn btn-list hidden">View Generated Leads</button>
-        <button type="button" id="viewOrdersPlacedBtn" class="btn btn-list hidden">View Orders Placed</button>
-        <button type="button" id="viewQualifiedLeadsBtn" class="btn btn-list hidden">View Qualified Leads</button>
-        <button type="button" id="ordersPlacedBtn" class="btn btn-orders hidden">Orders Placed</button>
-      </div>
-
-      <!-- Orders Section -->
-      <div id="ordersSection" class="hidden">
-        <div class="section-title">Place Order</div>
-        <div class="form-group">
-          <label for="orderCustomerCode">Customer Code *</label>
-          <input type="text" id="orderCustomerCode" placeholder="Enter customer code" required>
-          <button type="button" id="loadOrderStatusBtn" class="btn small" style="width:auto;padding:10px 14px;margin-top:8px;">Check Order Status</button>
-        </div>
-        <div id="orderStatusDisplay" class="order-status hidden">
-          <strong>Order Status:</strong>
-          <div id="orderStatusText"></div>
-        </div>
-        <div class="form-group">
-          <label for="orderNumber">Order Number *</label>
-          <select id="orderNumber" required>
-            <option value="">-- Select Order --</option>
-            <option value="Order 1">Order 1</option>
-            <option value="Order 2">Order 2</option>
-            <option value="Order 3">Order 3</option>
-            <option value="Order 4">Order 4</option>
-            <option value="Order 5">Order 5</option>
-            <option value="Order 6">Order 6</option>
-            <option value="Order 7">Order 7</option>
-            <option value="Order 8">Order 8</option>
-            <option value="Order 9">Order 9</option>
-            <option value="Order 10">Order 10</option>
-          </select>
-          <div class="small-muted">Orders must be submitted sequentially.</div>
-        </div>
-        <div class="form-group">
-          <label for="orderQuantity">Quantity (Kgs) *</label>
-          <input type="number" id="orderQuantity" placeholder="Enter quantity in Kgs" min="0" step="0.01" required>
-        </div>
-        <div class="btn-row">
-          <button type="button" id="submitOrderBtn" class="btn small">Submit Order</button>
-          <button type="button" id="closeOrdersBtn" class="btn small" style="background:#9ca3af;">Close</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="customerCode">Customer Code *</label>
-        <div class="field-inline">
-          <input type="text" id="customerCode" name="customerCode" required placeholder="Enter customer code">
-          <button type="button" id="loadBtn" class="btn small" style="width:auto;padding:10px 14px;">Load</button>
-        </div>
-        <div class="small-muted">Enter a code and click <strong>Load</strong> to fetch existing data.</div>
-      </div>
-
-      <!-- Leads List Section -->
-      <div id="leadsListSection" class="leads-list-section hidden">
-        <div class="section-title" id="leadsListTitle">Leads</div>
-        <div style="overflow-x:auto;">
-          <table class="leads-table" id="leadsTable">
-            <thead>
-              <tr>
-                <th>Customer Code</th>
-                <th>Store Name</th>
-                <th>Contact Person</th>
-                <th>Mobile Number</th>
-                <th>Region</th>
-                <th>Area</th>
-              </tr>
-            </thead>
-            <tbody id="leadsTableBody"></tbody>
-          </table>
-        </div>
-        <button type="button" id="closeLeadsListBtn" class="btn small" style="background:#9ca3af;margin-top:12px;">Close List</button>
-      </div>
-
-      <!-- Details Section -->
-      <div id="detailsSection" class="hidden">
-        <div class="section-title">Customer Details</div>
-        <div style="overflow-x:auto;">
-          <table class="details-table">
-            <tbody>
-              <tr><th>Customer Code</th><td id="d_customerCode"></td></tr>
-              <tr><th>Store Name</th><td id="d_storeName"></td></tr>
-              <tr><th>Contact Person</th><td id="d_contactPerson"></td></tr>
-              <tr><th>Mobile Number</th><td id="d_mobileNumber"></td></tr>
-              <tr><th>Region</th><td id="d_region"></td></tr>
-              <tr><th>Area</th><td id="d_area"></td></tr>
-              <tr><th>Location</th><td id="d_location"></td></tr>
-              <tr><th>Outlet Category</th><td id="d_outletCategory"></td></tr>
-              <tr><th>Brands Stocked</th><td id="d_brandsStocked"></td></tr>
-              <tr><th>Purchase Frequency</th><td id="d_purchaseFrequency"></td></tr>
-              <tr><th>Main Supplier</th><td id="d_mainSupplier"></td></tr>
-              <tr><th>Distributor Type</th><td id="d_distributorType"></td></tr>
-              <tr><th>Weldplus Awareness</th><td id="d_weldplusAwareness"></td></tr>
-              <tr><th>Additional Feedback</th><td id="d_additionalFeedback"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="section-title">Qualification</div>
-      <div class="form-group">
-        <label for="qualification">Qualification Status *</label>
-        <select id="qualification" name="qualification" required>
-          <option value="">-- Select Status --</option>
-          <option value="YES">YES</option>
-          <option value="NO">NO</option>
-          <option value="Volume Too Small">Volume Too Small</option>
-          <option value="Bad Previous History">Bad Previous History</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="btn-row" style="margin-bottom:14px;">
-        <button type="button" id="approveBtn" class="btn small" style="background:linear-gradient(135deg,#22c55e 0%,#16a34a 100%); display:none;">Approve</button>
-        <button type="button" id="declineBtn" class="btn small" style="background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%); display:none;">Decline</button>
-      </div>
-
-      <div class="section-title">Presentation</div>
-      <div class="form-group">
-        <label for="presentation">Presentation Status *</label>
-        <select id="presentation" name="presentation" required>
-          <option value="">-- Select Status --</option>
-          <option value="YES">YES</option>
-          <option value="Refused to Trade">Refused to Trade</option>
-          <option value="Refuse to Provide KYC">Refuse to Provide KYC</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <!-- Sales Rep Email Container -->
-      <div id="salesRepEmailContainer" class="form-group hidden">
-        <label for="salesRepEmail">Sales Rep Email</label>
-        <input type="email" id="salesRepEmail" placeholder="salesrep@example.com" />
-        <div class="small-muted">Optional: enter the sales rep's email.</div>
-      </div>
-
-      <button type="submit" class="btn" id="submitBtn">Submit</button>
-
-      <div class="loading" id="loading">Processing</div>
-      <div class="message" id="message"></div>
-    </form>
-  </div>
-
-  <!-- Password Modal -->
-  <div id="passwordModal" style="display:none;">
-    <div style="position:fixed;left:0;top:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:1000;">
-      <div style="background:white;padding:24px;border-radius:12px;width:90%;max-width:360px;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
-        <h3 style="margin-bottom:12px;font-size:18px;color:#333;">Supervisor Password</h3>
-        <input type="password" id="supervisorPasswordInput" placeholder="Enter supervisor password" style="width:100%;padding:12px;border:2px solid #e1e8ed;border-radius:8px;margin-bottom:12px;font-size:14px;">
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <button id="cancelPasswordBtn" style="padding:10px 20px;background:#9ca3af;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Cancel</button>
-          <button id="submitPasswordBtn" style="padding:10px 20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Submit</button>
-        </div>
-        <p id="passwordHint" style="font-size:12px;color:#ef4444;margin-top:8px;display:none;"></p>
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
+    // Prompt for installation
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+  </script>
 </body>
 </html>
