@@ -1,131 +1,142 @@
 const CACHE_NAME = 'steelwool-crm-v1';
-const urlsToCache = [
+const OFFLINE_URL = 'offline.html';
+
+// Files to cache for offline use
+const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/app.js',
+  '/offline.html',
   '/manifest.json',
+  '/icons/icon-72x72.png',
+  '/icons/icon-96x96.png',
+  '/icons/icon-128x128.png',
+  '/icons/icon-144x144.png',
+  '/icons/icon-152x152.png',
   '/icons/icon-192x192.png',
+  '/icons/icon-384x384.png',
   '/icons/icon-512x512.png'
 ];
 
-// Install event - cache essential files
+// Install event - cache static assets
 self.addEventListener('install', (event) => {
+  console.log('[SW] Installing service worker...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
+        console.log('[SW] Caching static assets');
+        return cache.addAll(STATIC_ASSETS);
       })
-      .catch((err) => {
-        console.log('Cache install error:', err);
-      })
+      .then(() => self.skipWaiting())
+      .catch((err) => console.log('[SW] Cache failed:', err))
   );
-  self.skipWaiting();
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating service worker...');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name !== CACHE_NAME)
+            .map((name) => {
+              console.log('[SW] Deleting old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      })
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
-  // Skip cross-origin requests
-  if (!event.request.url.startsWith(self.location.origin)) {
-    // For Google Apps Script requests, use network-first strategy
-    if (event.request.url.includes('script.google.com') || 
-        event.request.url.includes('script.googleusercontent.com')) {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip cross-origin requests (like Google Apps Script)
+  if (url.origin !== location.origin) {
+    // For Google Apps Script, use network-first strategy
+    if (url.hostname.includes('script.google.com')) {
       event.respondWith(
-        fetch(event.request)
+        fetch(request)
           .catch(() => {
-            return new Response(
-              JSON.stringify({ success: false, message: 'Offline - Cannot reach server' }),
-              { headers: { 'Content-Type': 'application/json' } }
-            );
+            return caches.match(OFFLINE_URL);
           })
       );
+      return;
     }
     return;
   }
 
+  // For same-origin requests, use cache-first strategy
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
+    caches.match(request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          // Return cached version and update cache in background
+          event.waitUntil(
+            fetch(request)
+              .then((response) => {
+                if (response && response.status === 200) {
+                  const responseClone = response.clone();
+                  caches.open(CACHE_NAME)
+                    .then((cache) => cache.put(request, responseClone));
+                }
+              })
+              .catch(() => {})
+          );
+          return cachedResponse;
         }
 
-        // Clone the request
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then((response) => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
+        // Not in cache, fetch from network
+        return fetch(request)
+          .then((response) => {
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => cache.put(request, responseClone));
             return response;
-          }
-
-          // Clone the response
-          const responseToCache = response.clone();
-
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
-          return response;
-        }).catch(() => {
-          // Return offline page if available
-          return caches.match('/index.html');
-        });
+          })
+          .catch(() => {
+            // Return offline page for navigation requests
+            if (request.mode === 'navigate') {
+              return caches.match(OFFLINE_URL);
+            }
+            return new Response('Offline', { status: 503, statusText: 'Offline' });
+          });
       })
   );
 });
 
-// Background sync for offline form submissions
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-orders') {
-    event.waitUntil(syncOrders());
-  }
-});
-
-async function syncOrders() {
-  // Get pending orders from IndexedDB and sync them
-  console.log('Syncing pending orders...');
-  // Implementation would depend on your offline storage strategy
-}
-
-// Push notifications (optional future feature)
+// Handle push notifications (optional, for future use)
 self.addEventListener('push', (event) => {
   const options = {
-    body: event.data ? event.data.text() : 'New update available',
+    body: event.data ? event.data.text() : 'New notification',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
-    vibrate: [200, 100, 200],
-    tag: 'steelwool-notification',
-    requireInteraction: false
+    vibrate: [100, 50, 100],
+    data: { url: '/' }
   };
-
   event.waitUntil(
     self.registration.showNotification('Steelwool CRM', options)
   );
 });
 
+// Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
-    clients.openWindow('/')
+    clients.openWindow(event.notification.data.url || '/')
   );
+});
+
+// Background sync (optional, for future use)
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-leads') {
+    console.log('[SW] Background sync triggered');
+  }
 });
